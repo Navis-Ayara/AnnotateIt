@@ -1,4 +1,18 @@
+import { useState } from "react";
+
+function UploadDisplay({ imageURL, initiateUpload }) {
+  return (
+    <img
+      onClick={initiateUpload}
+      src={imageURL}
+      style={{ height: "100%", width: "100%" }}
+    />
+  );
+}
+
 function App() {
+  const [imgURL, setImgURL] = useState(null);
+
   const handleDragOver = (event) => {
     event.preventDefault(); // the browser will not prepare to open the image
     event.target.classList.add("drag-over");
@@ -13,6 +27,7 @@ function App() {
     event.target.classList.remove("drag-over"); // remove visual feedback after release
 
     const file = event.dataTransfer.files[0];
+    setImgURL(URL.createObjectURL(file));
   };
 
   const handleUploadClick = () => {
@@ -22,6 +37,7 @@ function App() {
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
+    setImgURL(URL.createObjectURL(file));
   };
 
   return (
@@ -36,13 +52,23 @@ function App() {
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleImageDrop}
+            className={imgURL ? "is-displaying" : ""}
           >
-            <p>
-              Drag and drop an image or click{" "}
-              <span id="upload-button" onClick={handleUploadClick}>
-                here
-              </span>
-            </p>
+            {imgURL ? (
+              <UploadDisplay
+                imageURL={imgURL}
+                initiateUpload={handleUploadClick}
+              />
+            ) : (
+              <>
+                <p>
+                  Drag and drop an image or click{" "}
+                  <span id="upload-button" onClick={handleUploadClick}>
+                    here
+                  </span>
+                </p>
+              </>
+            )}
             <input
               onChange={handleImageChange}
               type="file"

@@ -49,6 +49,11 @@ main > div > div {
     color: #4d43ff;
 }
 
+#drop-zone.is-displaying {
+    border-style: solid;
+    border-width: 1px;
+}
+
 #upload-button {
     cursor: pointer;
     font-weight: bold;
