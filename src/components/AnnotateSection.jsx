@@ -2,9 +2,11 @@ import { useState } from "react";
 import UploadDisplay from "./UploadedDisplay";
 import downloadJson from "../utils";
 
+const FILE_EXTENSIONS = ["jpg", "png", "jpeg", "webp"];
+
 export default function AnnotateSection() {
   const [imgURL, setImgURL] = useState(null);
-  const [isJSONLoaded, setIsJSONLoaded] = useState(false);
+  const [isJSONLoaded] = useState(false);
   const [annotations, setAnnotations] = useState([]);
   const [fileName, setFileName] = useState(null);
 
@@ -22,10 +24,11 @@ export default function AnnotateSection() {
     event.target.classList.remove("drag-over"); // remove visual feedback after release
 
     const file = event.dataTransfer.files[0];
+    const fileName = file.name.split(".")[0];
     const extension = file.name.split(".")[1];
-    if (["jpg", "png", "jpeg", "webp"].includes(extension)) {
+    if (FILE_EXTENSIONS.includes(extension)) {
       setImgURL(URL.createObjectURL(file));
-      setFileName(file.name.split(".")[0]);
+      setFileName(fileName);
     }
   };
 
@@ -39,15 +42,15 @@ export default function AnnotateSection() {
     setFileName(file.name.split(".")[0]);
     setImgURL(URL.createObjectURL(file));
     const markers = document.querySelectorAll(".marker");
-    setAnnotations([]);
+    setAnnotations([]); // clear annotations store
     for (const marker of markers) {
-      marker.remove();
+      marker.remove(); // clear rendered markers
     }
   };
 
   const handleJsonChange = async (event) => {
     const file = event.target.files[0];
-    fetch(URL.createObjectURL(file))
+    fetch(URL.createObjectURL(file)) // due for refactor. probably a better way to do this
       .then((res) => res.json())
       .then((data) => setAnnotations(data));
   };
@@ -55,6 +58,7 @@ export default function AnnotateSection() {
   const saveToJSON = () => {
     downloadJson(annotations, `${fileName}.json`);
   };
+
   const loadFromJSON = () => {
     const fileInput = document.getElementById("json-input");
     fileInput.click();

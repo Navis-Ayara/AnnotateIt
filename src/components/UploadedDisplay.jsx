@@ -10,7 +10,7 @@ export default function UploadDisplay({ imageURL, points, setPoints }) {
     newElem.addEventListener("click", (e) => {
       e.stopPropagation();
     });
-    event.target.parentNode.appendChild(newElem);
+    event.target.parentNode.appendChild(newElem); // add the marker as a child to the hit area
   };
 
   return (
@@ -34,6 +34,13 @@ export default function UploadDisplay({ imageURL, points, setPoints }) {
       <div
         id="hit-area"
         onMouseDown={(event) => {
+          // calculates positions relative to the hit-area container
+          // x  => (top-left x Position Relative To Viewport - top-left x Container Position Relative To Viewport)
+          // y  => (top-left y Position Relative To Viewport - top-left y Container Position Relative To Viewport)
+          //
+          // then calculates percantage for responsive positions
+          // (x or y coordinates / hit area dimensions (width or height) * 100)
+
           boundingBox = event.target.getBoundingClientRect();
           x = event.clientX - boundingBox.left;
           x = ((x / boundingBox.width) * 100).toFixed(4);
@@ -42,6 +49,7 @@ export default function UploadDisplay({ imageURL, points, setPoints }) {
           mouseEvent = event;
         }}
         onMouseUp={() => {
+          // limit to 8 points
           if (points.length <= 7) {
             let newPoints = [...points];
             const id = points.length + 1 + 100;
@@ -51,7 +59,7 @@ export default function UploadDisplay({ imageURL, points, setPoints }) {
             });
             setPoints(newPoints);
             createMarker(id, mouseEvent, x, y);
-            console.log(newPoints);
+            console.log(newPoints); // debug. to be removed
           }
         }}
         style={{
