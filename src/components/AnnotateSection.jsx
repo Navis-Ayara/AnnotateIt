@@ -1,11 +1,12 @@
 import { useState } from "react";
 import UploadDisplay from "./UploadedDisplay";
-import { useEffect } from "react";
+import downloadJson from "../utils";
 
 export default function AnnotateSection() {
   const [imgURL, setImgURL] = useState(null);
   const [isJSONLoaded, setIsJSONLoaded] = useState(false);
   const [annotations, setAnnotations] = useState([]);
+  const [fileName, setFileName] = useState(null);
 
   const handleDragOver = (event) => {
     event.preventDefault(); // the browser will not prepare to open the image
@@ -21,16 +22,20 @@ export default function AnnotateSection() {
     event.target.classList.remove("drag-over"); // remove visual feedback after release
 
     const file = event.dataTransfer.files[0];
-    setImgURL(URL.createObjectURL(file));
+    const extension = file.name.split(".")[1];
+    if (["jpg", "png", "jpeg", "webp"].includes(extension)) {
+      setImgURL(URL.createObjectURL(file));
+    }
   };
 
   const handleUploadClick = () => {
-    const fileInput = document.getElementById("file-input");
+    const fileInput = document.getElementById("image-input");
     fileInput.click(); // manually invoke the file picker modal
   };
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
+    setFileName(file.name);
     setImgURL(URL.createObjectURL(file));
     const markers = document.querySelectorAll(".marker");
     setAnnotations([]);
@@ -39,8 +44,20 @@ export default function AnnotateSection() {
     }
   };
 
-  const saveToJSON = () => {};
-  const loadFromJSON = () => {};
+  const handleJsonChange = async (event) => {
+    const file = event.target.files[0];
+    fetch(URL.createObjectURL(file))
+      .then((res) => res.json())
+      .then((data) => setAnnotations(data));
+  };
+
+  const saveToJSON = () => {
+    downloadJson(annotations, `${fileName}.json`);
+  };
+  const loadFromJSON = () => {
+    const fileInput = document.getElementById("json-input");
+    fileInput.click();
+  };
 
   return (
     <div>
@@ -58,19 +75,26 @@ export default function AnnotateSection() {
             setPoints={setAnnotations}
           />
         ) : (
-          <>
-            <p>
-              Drag and drop an image or click{" "}
-              <span id="upload-button" onClick={handleUploadClick}>
-                here
-              </span>
-            </p>
-          </>
+          <p>
+            Drag and drop an image or click{" "}
+            <span id="upload-button" onClick={handleUploadClick}>
+              here
+            </span>
+          </p>
         )}
         <input
           onChange={handleImageChange}
           type="file"
-          id="file-input"
+          id="image-input"
+          accept=".jpg, .png, .jpeg, .webp"
+          style={{ display: "none" }}
+        ></input>
+        <input
+          onChange={handleJsonChange}
+          type="file"
+          id="json-input"
+          accept=".json"
+          multiple={false}
           style={{ display: "none" }}
         ></input>
       </div>
