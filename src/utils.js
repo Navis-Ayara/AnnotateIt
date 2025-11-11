@@ -12,4 +12,17 @@ function downloadJson(data, filename) {
   URL.revokeObjectURL(url);
 }
 
-export default downloadJson;
+const createMarker = (id, localX, localY) => {
+  const parentNode = document.getElementById("interaction-container");
+  const newElem = document.createElement("div");
+  newElem.id = `${id}`;
+  newElem.className = "marker";
+  newElem.style.left = `${localX}%`;
+  newElem.style.top = `${localY}%`;
+  newElem.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+  parentNode.appendChild(newElem); // add the marker as a child to the hit area
+};
+
+export { downloadJson, createMarker };

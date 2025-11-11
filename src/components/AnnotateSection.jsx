@@ -1,6 +1,6 @@
 import { useState } from "react";
 import UploadDisplay from "./UploadedDisplay";
-import downloadJson from "../utils";
+import { downloadJson, createMarker } from "../utils";
 
 const FILE_EXTENSIONS = ["jpg", "png", "jpeg", "webp"];
 
@@ -52,7 +52,14 @@ export default function AnnotateSection() {
     const file = event.target.files[0];
     fetch(URL.createObjectURL(file)) // due for refactor. probably a better way to do this
       .then((res) => res.json())
-      .then((data) => setAnnotations(data));
+      .then((data) => {
+        if ((data ?? []).length > 0) {
+          for (const point of data) {
+            createMarker(point.id, point.data.x, point.data.y);
+          }
+          setAnnotations(data ?? []);
+        }
+      });
   };
 
   const saveToJSON = () => {

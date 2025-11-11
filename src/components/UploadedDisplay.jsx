@@ -1,20 +1,11 @@
-export default function UploadDisplay({ imageURL, points, setPoints }) {
-  let x, y, boundingBox, mouseEvent;
+import { createMarker } from "../utils";
 
-  const createMarker = (id, event, localX, localY) => {
-    const newElem = document.createElement("div");
-    newElem.id = `${id}`;
-    newElem.className = "marker";
-    newElem.style.left = `${localX}%`;
-    newElem.style.top = `${localY}%`;
-    newElem.addEventListener("click", (e) => {
-      e.stopPropagation();
-    });
-    event.target.parentNode.appendChild(newElem); // add the marker as a child to the hit area
-  };
+export default function UploadDisplay({ imageURL, points, setPoints }) {
+  let x, y, boundingBox;
 
   return (
     <div
+      id="interaction-container"
       style={{
         width: "100%",
         height: "100%",
@@ -46,11 +37,10 @@ export default function UploadDisplay({ imageURL, points, setPoints }) {
           x = ((x / boundingBox.width) * 100).toFixed(4);
           y = event.clientY - boundingBox.top;
           y = ((y / boundingBox.height) * 100).toFixed(4);
-          mouseEvent = event;
         }}
         onMouseUp={() => {
           // limit to 8 points
-          if (points.length <= 7) {
+          if (points.length < 8) {
             let newPoints = [...points];
             const id = points.length + 1 + 100;
             newPoints.push({
@@ -58,8 +48,7 @@ export default function UploadDisplay({ imageURL, points, setPoints }) {
               data: { x: x, y: y, name: "" },
             });
             setPoints(newPoints);
-            createMarker(id, mouseEvent, x, y);
-            console.log(newPoints); // debug. to be removed
+            createMarker(id, x, y);
           }
         }}
         style={{

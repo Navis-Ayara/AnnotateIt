@@ -30,8 +30,8 @@ go to [http://localhost:5173](http://localhost:5173)
 
 ## TODO
 
- - Load annotations from JSON
- - Implement annotation labelling
+ - Load annotations from JSON [x]
+ - Implement annotation labelling []
 
 ## Contributing
 
