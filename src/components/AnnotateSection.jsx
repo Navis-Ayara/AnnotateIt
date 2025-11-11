@@ -6,8 +6,7 @@ const FILE_EXTENSIONS = ["jpg", "png", "jpeg", "webp"];
 
 export default function AnnotateSection() {
   const [imgURL, setImgURL] = useState(null);
-  const [isJSONLoaded] = useState(false);
-  const [annotations, setAnnotations] = useState([]);
+  const [annotations, setAnnotations] = useState({});
   const [fileName, setFileName] = useState(null);
 
   const handleDragOver = (event) => {
@@ -42,7 +41,7 @@ export default function AnnotateSection() {
     setFileName(file.name.split(".")[0]);
     setImgURL(URL.createObjectURL(file));
     const markers = document.querySelectorAll(".marker");
-    setAnnotations([]); // clear annotations store
+    setAnnotations({}); // clear annotations store
     for (const marker of markers) {
       marker.remove(); // clear rendered markers
     }
@@ -53,11 +52,11 @@ export default function AnnotateSection() {
     fetch(URL.createObjectURL(file)) // due for refactor. probably a better way to do this
       .then((res) => res.json())
       .then((data) => {
-        if ((data ?? []).length > 0) {
-          for (const point of data) {
-            createMarker(point.id, point.data.x, point.data.y);
+        if (Object.keys(data ?? {}).length > 0) {
+          for (const [pointId, pointData] in Object.entries(data)) {
+            createMarker(pointId, pointData?.x, pointData?.y);
           }
-          setAnnotations(data ?? []);
+          setAnnotations(data ?? {});
         }
       });
   };
@@ -117,14 +116,11 @@ export default function AnnotateSection() {
         >
           Upload New
         </button>
-        <button
-          disabled={imgURL && !isJSONLoaded ? false : true}
-          onClick={loadFromJSON}
-        >
+        <button disabled={imgURL ? false : true} onClick={loadFromJSON}>
           Load JSON
         </button>
         <button
-          disabled={annotations.length > 0 ? false : true}
+          disabled={Object.keys(annotations).length > 0 ? false : true}
           onClick={saveToJSON}
         >
           Download JSON

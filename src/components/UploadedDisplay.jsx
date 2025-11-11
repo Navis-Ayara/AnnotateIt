@@ -40,14 +40,13 @@ export default function UploadDisplay({ imageURL, points, setPoints }) {
         }}
         onMouseUp={() => {
           // limit to 8 points
-          if (points.length < 8) {
-            let newPoints = [...points];
-            const id = points.length + 1 + 100;
-            newPoints.push({
-              id: id,
-              data: { x: x, y: y, name: "" },
-            });
+          const numOfPoints = Object.keys(points).length;
+          if (numOfPoints < 8) {
+            let newPoints = { ...points };
+            const id = numOfPoints + 1 + 100;
+            newPoints[id.toString()] = { x: x, y: y, name: "" };
             setPoints(newPoints);
+            console.log(newPoints);
             createMarker(id, x, y);
           }
         }}
