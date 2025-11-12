@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-function Marker({ id, localX, localY, points, setPoints, name }) {
+function Marker({ id, localX, localY, annotations, updateAnnotations, name }) {
   const [label, setLabel] = useState(name ?? "");
 
   const updateLabel = (e) => {
     setLabel(e.target.value);
-    const updatedPoints = { ...points };
+    const updatedPoints = { ...annotations };
     updatedPoints[id].name = e.target.value;
-    setPoints(updatedPoints);
+    updateAnnotations(updatedPoints);
   };
 
   return (
