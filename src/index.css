@@ -54,7 +54,7 @@ main > div > div {
     border-width: 1px;
 }
 
-#upload-button {
+.upload-button {
     cursor: pointer;
     font-weight: bold;
     text-decoration: underline;
