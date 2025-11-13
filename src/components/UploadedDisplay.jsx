@@ -36,7 +36,7 @@ export default function UploadDisplay({
           if (activeID) {
             // removes current label visibility
             setActiveID(null);
-          } else {
+          } else if (markersVisible === true) {
             // calculates positions relative to the hit-area container
             // x  => (top-left x Position Relative To Viewport - top-left x Container Position Relative To Viewport)
             // y  => (top-left y Position Relative To Viewport - top-left y Container Position Relative To Viewport)
