@@ -1,6 +1,8 @@
 import { useState } from "react";
 import UploadDisplay from "./UploadedDisplay";
 import { downloadJson } from "../utils";
+import visibility from "../assets/visibility.svg";
+import disabled_visibile from "../assets/disabled_visible.svg";
 
 const FILE_EXTENSIONS = ["jpg", "png", "jpeg", "webp"];
 
@@ -8,6 +10,7 @@ export default function AnnotateSection() {
   const [imgURL, setImgURL] = useState(null);
   const [annotations, updateAnnotations] = useState({});
   const [saveName, setSaveName] = useState(null);
+  const [markersVisible, setMarkerVisibility] = useState(true);
 
   const handleDragOver = (event) => {
     event.preventDefault(); // the browser will not prepare to open the image
@@ -67,6 +70,8 @@ export default function AnnotateSection() {
     fileInput.click();
   };
 
+  const numberOfAnnotations = Object.keys(annotations).length;
+
   return (
     <div>
       <div
@@ -81,6 +86,8 @@ export default function AnnotateSection() {
             imageURL={imgURL}
             store={annotations}
             updateStore={updateAnnotations}
+            markersVisible={markersVisible}
+            updateMarkerVisibility={setMarkerVisibility}
           />
         ) : (
           <p>
@@ -109,6 +116,13 @@ export default function AnnotateSection() {
       </div>
       <div className="action-buttons">
         <button
+          style={{ display: numberOfAnnotations > 0 ? "block" : "none" }}
+          title="Toggle markers visibility"
+          onClick={() => setMarkerVisibility(!markersVisible)}
+        >
+          <img src={markersVisible ? disabled_visibile : visibility} />
+        </button>
+        <button
           style={{ display: imgURL ? "block" : "none" }}
           onClick={handleUploadClick}
         >
@@ -118,7 +132,7 @@ export default function AnnotateSection() {
           Load JSON
         </button>
         <button
-          disabled={Object.keys(annotations).length > 0 ? false : true}
+          disabled={numberOfAnnotations > 0 ? false : true}
           onClick={saveToJSON}
         >
           Download JSON

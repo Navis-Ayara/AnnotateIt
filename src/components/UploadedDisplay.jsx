@@ -2,7 +2,12 @@ import { useState } from "react";
 
 import Marker from "./Marker";
 
-export default function UploadDisplay({ imageURL, store, updateStore }) {
+export default function UploadDisplay({
+  imageURL,
+  store,
+  updateStore,
+  markersVisible,
+}) {
   let x, y, boundingBox;
 
   const [activeID, setActiveID] = useState(null);
@@ -65,19 +70,20 @@ export default function UploadDisplay({ imageURL, store, updateStore }) {
           zIndex: "2",
         }}
       ></div>
-      {Object.keys(store).map((annotationID) => (
-        <Marker
-          key={annotationID}
-          id={annotationID}
-          localX={store[annotationID]?.x}
-          localY={store[annotationID]?.y}
-          annotations={store}
-          updateAnnotations={updateStore}
-          name={store[annotationID]?.name}
-          activeID={activeID}
-          setActiveID={setActiveID}
-        />
-      ))}
+      {markersVisible &&
+        Object.keys(store).map((annotationID) => (
+          <Marker
+            key={annotationID}
+            id={annotationID}
+            localX={store[annotationID]?.x}
+            localY={store[annotationID]?.y}
+            annotations={store}
+            updateAnnotations={updateStore}
+            name={store[annotationID]?.name}
+            activeID={activeID}
+            setActiveID={setActiveID}
+          />
+        ))}
     </div>
   );
 }
