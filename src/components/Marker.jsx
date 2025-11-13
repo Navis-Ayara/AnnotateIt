@@ -38,17 +38,17 @@ function Marker({
           setActiveID(id);
         }}
       ></div>
-      <div
-        className="label"
-        style={{ display: activeID === id ? "block" : "none" }}
-      >
-        <input
-          type="text"
-          value={label}
-          onChange={updateLabel}
-          className="label-input"
-        />
-      </div>
+      {activeID === id && (
+        <div className="label">
+          <input
+            type="text"
+            value={label}
+            onChange={updateLabel}
+            className="label-input"
+            autoFocus
+          />
+        </div>
+      )}
     </div>
   );
 }
